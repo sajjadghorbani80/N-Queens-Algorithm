@@ -1,0 +1,72 @@
+﻿@page "/"
+@using NQueens.Shared
+@inject HttpClient Http
+
+<PageTitle>N Queens Algorithm</PageTitle>
+
+<h1>N Queens Algorithm</h1>
+
+<p>This algorithm displays all possible states for placing n queens in n*n chess.</p>
+<label>Enter the number of queens:</label>
+<input style="text-align:left;" class="form-control" type="text" @onchange="@((e) => { n=Convert.ToInt32(e.Value.ToString());})" placeholder="Please enter a whole and positive number" />
+<button class="btn btn-primary" onclick="@(async ()=> await Nqueens())">Get the solution</button>
+<hr>
+
+@if (answers != null)
+{
+
+    <div class="main-container">
+        @foreach (var soloution in answers)
+        {
+            <div class="container">
+                <table dir="ltr">
+                    <tbody>
+                        @for (var i = 0; i < n; i++)
+                        {
+                            <tr>
+                                @for (var j = 0; j < n; j++)
+                                {
+                                    Console.WriteLine(i);
+                                    @if (j == soloution[i]-1)
+                                    {
+                                        <td class="answer"></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div style="display:flex;justify-content:center;">
+                    <p style="margin:10px !important">
+                        @foreach (var m in soloution)
+                        {
+                            <span>@m</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+
+
+
+}
+<br />
+<br />
+
+
+
+@code {
+    private List<List<int>>? answers;
+    private int n;
+    private async Task Nqueens()
+    {
+        using var res = await Http.PostAsJsonAsync<int>("api/nvazir", n);
+        answers = await res.Content.ReadFromJsonAsync<List<List<int>>>();
+    }
+}
